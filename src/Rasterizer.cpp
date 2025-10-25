@@ -1,6 +1,10 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 
+#include "Math/Triangle.hpp"
+#include "Rendering/Camera.hpp"
+#include "Rendering/Mesh.hpp"
+
 #define WIDTH 1280
 #define HEIGHT 720
 
@@ -18,8 +22,46 @@ int init() {
         std::cerr << "Error creating window: \n" << SDL_GetError() << std::endl;
         return 2;
     }
+
+    windowSurface = SDL_GetWindowSurface(window);
+    if (!windowSurface) {
+        std::cerr << "Error fetching window surface: \n" << SDL_GetError() << std::endl;
+        return 3;
+    }
+    return 0;
 }
 
-void main(int argc, char* argv) {
-    std::cout << "Hello World" << std::endl;
+void renderFrame() {
+    Camera cam = Camera();
+
+    Triangle3D testTri = Triangle3D(vec3(-1, -1, 0), vec3(1, -1, 0), vec3(0, 0, 0));
+    Mesh testMesh = Mesh(vec3(0, 0, -0.5), vec3());
+    testMesh.tris.push_back(testTri);
+    Mesh transformed = testMesh.getTransformed(cam);
+    
+    Triangle2D render = transformed.tris.at(0).to2D();
+    const Bounds bounds = render.getBounds();
+
+    std::cout << bounds.topLeftX << " " << bounds.topLeftY << " " << bounds.bottomRightX << " " << bounds.bottomRightY << std::endl;
+
+    for (int x = bounds.topLeftX; x <= bounds.bottomRightX; x++) {
+        for (int y = bounds.topLeftY; y <= bounds.bottomRightY; y++) {
+            if (render.pointInside(vec2(x, y))) {
+                SDL_FillRect(windowSurface, new SDL_Rect{x + WIDTH / 2, y + HEIGHT / 2, 1, 1}, 0xffff0000);
+            }
+        }
+    }
+
+    SDL_UpdateWindowSurface(window);
+
+}
+
+int main(int argc, char** argv) {
+    if (init() != 0) {
+        return -1;
+    }
+
+    renderFrame();
+    SDL_Delay(5000);
+
 }

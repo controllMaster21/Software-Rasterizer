@@ -1,6 +1,8 @@
 #include "Vectors.hpp"
 #include "translation.hpp"
 
+#include <iostream>
+
 vec3 rotate(vec3 v, float x, float y, float z) {
     const float rotX[3][3] = {
         {1,      0,       0},
@@ -24,4 +26,11 @@ vec3 rotate(vec3 v, float x, float y, float z) {
     const mat3x3 rotZMat = mat3x3(rotZ);
 
     return rotZMat * rotYMat * rotXMat * v;
+}
+
+Triangle3D rotate(Triangle3D tri, float x, float y, float z) {
+    tri.p0 = rotate(tri.p0, x, y, z);
+    tri.p1 = rotate(tri.p1, x, y, z);
+    tri.p2 = rotate(tri.p2, x, y, z);
+    return tri;
 }

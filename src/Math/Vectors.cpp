@@ -1,12 +1,15 @@
 #include "Vectors.hpp"
 
 #include <cmath>
+#include <iostream>
 
 // Constructors
+vec3::vec3() : x(0), y(0), z(0) {}
 vec3::vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 vec3::vec3(float xyz) : x(xyz), y(xyz), z(xyz) {}
 vec3::vec3(const float array[3]) : x(array[0]), y(array[1]), z(array[2]) {}
 
+vec2::vec2() : x(0), y(0) {}
 vec2::vec2(float x, float y) : x(x), y(y) {}
 vec2::vec2(float xy) : x(xy), y(xy) {}
 
@@ -36,6 +39,14 @@ vec3 operator /(vec3 v1, float d) {
     return vec3(v1.x / d, v1.y / d, v1.z / d);
 }
 
+vec3& operator +=(vec3& v1, vec3 v2) {
+    v1 = v1 + v2;
+    return v1;
+}
+vec3& operator -=(vec3& v1, vec3 v2) {
+    v1 = v1 - v2;
+    return v1;
+}
 
 vec2 operator +(vec2 v1, vec2 v2) {
     return vec2(v1.x + v2.x, v1.y + v2.y);
