@@ -2,6 +2,7 @@
 #include "../Math/Triangle.hpp"
 #include "Camera.hpp"
 
+#include <fstream>
 #include <vector>
 
 #ifndef MESH_HPP
@@ -18,6 +19,14 @@ class Mesh {
     Mesh(vec3 pos, vec3 rot);
 
     Mesh getTransformed(Camera cam) const;
+};
+
+class MeshFile {
+    public:
+    MeshFile(const char* path);
+
+    private:
+    std::ifstream file;
 };
 
 #endif

@@ -2,6 +2,8 @@
 #include "Camera.hpp"
 #include "../Math/translation.hpp"
 
+#include <fstream>
+
 Mesh::Mesh() {}
 Mesh::Mesh(vec3 pos, vec3 rot) : pos(pos), rot(rot) {}
 
@@ -14,4 +16,12 @@ Mesh Mesh::getTransformed(Camera cam) const {
         temp.tris.push_back(tri);
     }
     return temp;
+}
+
+MeshFile::MeshFile(const char* path) {
+    file = std::ifstream(path);
+
+    std::string line;
+
+    getline(file, line);
 }
