@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <sys/resource.h>
 
 #include "Math/Triangle.hpp"
 #include "Rendering/Camera.hpp"

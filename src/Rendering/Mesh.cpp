@@ -24,23 +24,34 @@ MeshFile::MeshFile(const char* path) {
 
     std::string line;
 
-    while (line.empty()) {
-        readLine(line);
-    }
-
-    // Get vertices
     for (int i = 0; m_file.peek() != EOF; i++) {
+        if (line.empty()) {
+            readLine(line);
+            continue;
+        }
+
         const std::string dataType = line.substr(0, 2).c_str();
+
         if (dataType == "v ") {
             m_vertices.push_back(getVector(line));
         } else if (dataType == "f ") {
             int idx = 2;
 
-            std::vector<vec3> vertices;
+            std::vector<int> vertexIndices;
 
-            for (int i = parseFaceIdx(line, idx); i >=0; vertices.push_back(m_vertices[i])) {}
+            for (int i = parseVertexIdx(line, idx); i >=0; i = parseVertexIdx(line, idx)) {
+                vertexIndices.push_back(i);
 
-            m_faces.push_back(&vertices);
+                idx = line.find_first_of(' ', idx);
+
+                if (idx == std::string::npos) {
+                    break;
+                } else {
+                    idx++;
+                }
+            }
+
+            m_faces.push_back(&vertexIndices);
         }
         
         readLine(line);
@@ -49,12 +60,13 @@ MeshFile::MeshFile(const char* path) {
 }
 
 float MeshFile::parseAxisValue(std::string line, int& idx) {
-        idx = line.find_first_not_of(' ', idx);
         std::string axisString;
 
         for (int& i = idx; !std::iswspace(line[i]) && i < line.size(); i++) {
             axisString.push_back(line[i]);
         }
+
+        idx++;
 
         return std::stof(axisString);
 }
@@ -71,8 +83,7 @@ inline vec3 MeshFile::getVector(std::string line) {
     return vPos;
 }
 
-int MeshFile::parseFaceIdx(std::string line, int& idx) {
-    idx = line.find_first_not_of(" /", idx);
+int MeshFile::parseVertexIdx(std::string line, int& idx) {
     std::string vertexIdx;
 
     for (int& i = idx; !std::iswspace(line[i]) && line[i] != '/' && i < line.size(); i++) {
@@ -85,19 +96,21 @@ int MeshFile::parseFaceIdx(std::string line, int& idx) {
 inline void MeshFile::readLine(std::string& line) {
     std::getline(m_file, line);
     const std::size_t idx = line.find_first_of('#');
-    if (idx != -1) line.erase(idx);
+    if (idx != line.npos) line.erase(idx);
 }
 
 Mesh MeshFile::convertToMesh() {
+
     Mesh out;
 
-    for (std::vector<vec3>* vertices : m_faces) {
-        if (vertices->size() == 3) {
-            Triangle3D tri = Triangle3D(vertices->at(0), vertices->at(1), vertices->at(2));
+    for (int i = 0; i < m_faces.size(); i++) {
+        std::vector<int>* vertexIndices = m_faces[i];
+        if (vertexIndices->size() == 3) {
+            Triangle3D tri = Triangle3D(m_vertices[vertexIndices->at(0)], m_vertices[vertexIndices->at(1)], m_vertices[vertexIndices->at(2)]);
             out.tris.push_back(tri);
         } else {
-            std::cerr << "Not a triangle" << std::endl;
-            exit(-4);
+            std::cerr << "Error at face number: " << i << " " << "Number of vertices: " << vertexIndices->size() << std::endl;
+            exit(EXIT_FAILURE);
         }
     }
 

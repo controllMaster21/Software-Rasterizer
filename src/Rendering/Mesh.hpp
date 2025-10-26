@@ -30,12 +30,12 @@ class MeshFile {
     private:
     std::ifstream m_file;
     std::vector<vec3> m_vertices;
-    std::vector<std::vector<vec3>*> m_faces;
+    std::vector<std::vector<int>*> m_faces;
 
     float parseAxisValue(std::string line, int& idx);
     inline vec3 getVector(std::string line);
     
-    int parseFaceIdx(std::string line, int& idx);
+    int parseVertexIdx(std::string line, int& idx);
 
     inline void readLine(std::string& line);
 };
