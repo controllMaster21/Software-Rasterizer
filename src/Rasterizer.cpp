@@ -10,6 +10,7 @@
 
 SDL_Window* window;
 SDL_Surface* windowSurface;
+MeshFile suzanne = MeshFile("/home/viko/Projekte/c++/Software-Rasterizer/suzanne.obj");
 
 int init() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -34,9 +35,9 @@ int init() {
 void renderFrame() {
     Camera cam = Camera();
 
-    Triangle3D testTri = Triangle3D(vec3(-1, -1, 0), vec3(1, -1, 0), vec3(0, 0, 0));
-    Mesh testMesh = Mesh(vec3(0, 0, -0.5), vec3());
-    testMesh.tris.push_back(testTri);
+    Mesh testMesh = suzanne.convertToMesh();
+    testMesh.pos = vec3(0, 0, -0.5);
+
     Mesh transformed = testMesh.getTransformed(cam);
     
     Triangle2D render = transformed.tris.at(0).to2D();

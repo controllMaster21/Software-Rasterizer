@@ -48,6 +48,11 @@ vec3& operator -=(vec3& v1, vec3 v2) {
     return v1;
 }
 
+std::ostream& operator <<(std::ostream& stream, const vec3 v) {
+    stream << "\nx: " << v.x << "\ny: " << v.y << "\nz: " << v.z;
+    return stream;
+}
+
 vec2 operator +(vec2 v1, vec2 v2) {
     return vec2(v1.x + v2.x, v1.y + v2.y);
 }

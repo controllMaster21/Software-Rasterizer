@@ -25,8 +25,19 @@ class MeshFile {
     public:
     MeshFile(const char* path);
 
+    Mesh convertToMesh();
+
     private:
-    std::ifstream file;
+    std::ifstream m_file;
+    std::vector<vec3> m_vertices;
+    std::vector<std::vector<vec3>*> m_faces;
+
+    float parseAxisValue(std::string line, int& idx);
+    inline vec3 getVector(std::string line);
+    
+    int parseFaceIdx(std::string line, int& idx);
+
+    inline void readLine(std::string& line);
 };
 
 #endif
